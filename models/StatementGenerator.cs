@@ -14,28 +14,7 @@ namespace RefatoringMartinFowler.models
             foreach(var perf in invoice.Performances)
             {
                 var play = plays[perf.PlayID];
-                int thisAmount = 0;
-
-                switch(play.Type)
-                {
-                    case "tragedy":
-                        thisAmount = 40000;
-                        if(perf.Audience > 30)
-                        {
-                            thisAmount += 1000 * (perf.Audience - 30);
-                        }
-                        break;
-                    case "comedy":
-                        thisAmount = 30000;
-                        if(perf.Audience > 20)
-                        {
-                            thisAmount += 10000 + 500 * (perf.Audience - 20);
-                        }
-                        thisAmount += 300 * perf.Audience;
-                        break;
-                    default:
-                        throw new Exception($"unknown type: {play.Type}");
-                }
+                int thisAmount = AmountFor(perf, play);
 
                 // add volume credits
                 volumeCredits += Math.Max(perf.Audience - 30, 0);
@@ -50,6 +29,33 @@ namespace RefatoringMartinFowler.models
             result += $"Amount owed is {format(totalAmount / 100)}\n";
             result += $"You earned {volumeCredits} credits\n";
             return result;
+        }
+
+        public int AmountFor(Performance perf, Play play)
+        {
+            int thisAmount = 0;
+            switch(play.Type)
+            {
+                case "tragedy":
+                    thisAmount = 40000;
+                    if(perf.Audience > 30)
+                    {
+                        thisAmount += 1000 * (perf.Audience - 30);
+                    }
+                    break;
+                case "comedy":
+                    thisAmount = 30000;
+                    if(perf.Audience > 20)
+                    {
+                        thisAmount += 10000 + 500 * (perf.Audience - 20);
+                    }
+                    thisAmount += 300 * perf.Audience;
+                    break;
+                default:
+                    throw new Exception($"unknown type: {play.Type}");
+            }
+
+            return thisAmount;
         }
     }
 }
