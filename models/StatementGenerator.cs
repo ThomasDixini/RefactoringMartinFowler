@@ -41,7 +41,7 @@ namespace RefatoringMartinFowler.models
         public int AmountFor(Performance aPerformance, Play play)
         {
             int result;
-            switch(play.Type)
+            switch(PlayFor(aPerformance).Type)
             {
                 case "tragedy":
                     result = 40000;
@@ -59,7 +59,7 @@ namespace RefatoringMartinFowler.models
                     result += 300 * aPerformance.Audience;
                     break;
                 default:
-                    throw new Exception($"unknown type: {play.Type}");
+                    throw new Exception($"unknown type: {PlayFor(aPerformance).Type}");
             }
 
             return result;
