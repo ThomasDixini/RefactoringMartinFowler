@@ -78,23 +78,23 @@ namespace RefatoringMartinFowler.models
 
         public decimal TotalAmountFor()
         {
-            decimal volumeCredits = 0m;
+            decimal result = 0m;
             foreach(var perf in Invoice.Performances)
             {
-                volumeCredits += VolumeCreditsFor(perf);
+                result += VolumeCreditsFor(perf);
             }
-            return volumeCredits;
+            return result;
         }
 
         public int TotalAmount()
         {
-            int totalAmount = 0;
+            int result = 0;
             foreach(var perf in Invoice.Performances)
             {
-                totalAmount += AmountFor(perf);
+                result += AmountFor(perf);
             }
 
-            return totalAmount;
+            return result;
         }
     }
 }
