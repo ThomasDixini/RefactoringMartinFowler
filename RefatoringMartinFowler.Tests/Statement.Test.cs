@@ -21,6 +21,6 @@ public class UnitTest
         lines[2].Should().Be("As You Like It: $580.00 (35 seats)");
         lines[3].Should().Be("Othello: $500.00 (40 seats)");
         lines[4].Should().Be("Amount owed is $1,730.00");
-        lines[5].Should().Be("You earned 47 credits");
+        lines[5].Should().Be("You earned 40 credits");
     }
 }

@@ -56,12 +56,25 @@ namespace RefatoringMartinFowler.models
 
         public Performance EnrichPerformance(Performance aPerformance)
         {
-            var calculator = new PerformanceCalculator(aPerformance, PlayFor(aPerformance));
+            var calculator = CreatePerformanceCalculator(aPerformance, PlayFor(aPerformance));
             var result = aPerformance;
             result.Play = calculator.Play;
             result.Amount = calculator.Amount;
             result.VolumeCredits = calculator.VolumeCredits;
             return result;
+        }
+
+        public PerformanceCalculator CreatePerformanceCalculator(Performance aPerformance, Play play)
+        {
+            switch(play.Type)
+            {
+                case "tragedy":
+                    return new TragedyCalculator(aPerformance, play);
+                case "comedy":
+                    return new ComedyCalculator(aPerformance, play);
+                default:
+                    throw new Exception($"unknown type: {play.Type}");
+            }
         }
 
         public string RenderPlainText(StatementData data)
@@ -77,19 +90,9 @@ namespace RefatoringMartinFowler.models
             return result;
         }
 
-        public int AmountFor(Performance aPerformance)
-        {
-            return new PerformanceCalculator(aPerformance, PlayFor(aPerformance)).Amount;
-        }
-
         public Play PlayFor(Performance performance)
         {
             return Plays[performance.PlayID];
-        }
-
-        public decimal VolumeCreditsFor(Performance aPerformance)
-        {
-            return new PerformanceCalculator(aPerformance, PlayFor(aPerformance)).VolumeCredits;
         }
 
         public string Usd(decimal amount)
