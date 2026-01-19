@@ -21,7 +21,7 @@ namespace RefatoringMartinFowler.models
 
             foreach(var perf in invoice.Performances)
             {
-                int thisAmount = AmountFor(perf, PlayFor(perf));
+                int thisAmount = AmountFor(perf);
 
                 // add volume credits
                 volumeCredits += Math.Max(perf.Audience - 30, 0);
@@ -38,7 +38,7 @@ namespace RefatoringMartinFowler.models
             return result;
         }
 
-        public int AmountFor(Performance aPerformance, Play play)
+        public int AmountFor(Performance aPerformance)
         {
             int result;
             switch(PlayFor(aPerformance).Type)
