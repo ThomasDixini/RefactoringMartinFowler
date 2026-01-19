@@ -20,6 +20,11 @@ namespace RefatoringMartinFowler.models
         }
         public string Statement(Invoice invoice, Dictionary<string, Play> plays)
         {
+            return RenderPlainText(invoice, plays);
+        }
+
+        public string RenderPlainText(Invoice invoice, Dictionary<string, Play> plays)
+        {
             string result = $"Statement for {invoice.Customer}\n";
             foreach(var perf in invoice.Performances)
             {
@@ -27,7 +32,7 @@ namespace RefatoringMartinFowler.models
             }
 
             result += $"Amount owed is {Usd(TotalAmount())}\n";
-            result += $"You earned {TotalAmountFor()} credits\n";
+            result += $"You earned {TotalVolumeCredits()} credits\n";
             return result;
         }
 
@@ -76,7 +81,7 @@ namespace RefatoringMartinFowler.models
             return (amount / 100).ToString("C", CultureInfo.GetCultureInfo("en-US"));
         }
 
-        public decimal TotalAmountFor()
+        public decimal TotalVolumeCredits()
         {
             decimal result = 0m;
             foreach(var perf in Invoice.Performances)
