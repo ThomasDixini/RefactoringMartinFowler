@@ -15,16 +15,19 @@ namespace RefatoringMartinFowler.models
         public string Statement(Invoice invoice, Dictionary<string, Play> plays)
         {
             int totalAmount = 0;
-            decimal volumeCredits = 0m;
             string result = $"Statement for {invoice.Customer}\n";
 
             foreach(var perf in invoice.Performances)
             {
-                volumeCredits += VolumeCreditsFor(perf);
-
                 // print line for this order
                 result += $"{PlayFor(perf).Name}: {Usd(AmountFor(perf))} ({perf.Audience} seats)\n";
                 totalAmount += AmountFor(perf);
+            }
+            
+            decimal volumeCredits = 0m;
+            foreach(var perf in invoice.Performances)
+            {
+                volumeCredits += VolumeCreditsFor(perf);
             }
 
             result += $"Amount owed is {Usd(totalAmount)}\n";
