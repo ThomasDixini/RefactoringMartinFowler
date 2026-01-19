@@ -13,16 +13,15 @@ namespace RefatoringMartinFowler.models
 
             foreach(var perf in invoice.Performances)
             {
-                var play = plays[perf.PlayID];
-                int thisAmount = AmountFor(perf, play);
+                int thisAmount = AmountFor(perf, PlayFor(perf, plays));
 
                 // add volume credits
                 volumeCredits += Math.Max(perf.Audience - 30, 0);
                 // add extra credit for every ten comedy attendees
-                if("comedy" == play.Type) volumeCredits += Math.Floor((decimal) perf.Audience / 5);
+                if("comedy" == PlayFor(perf, plays).Type) volumeCredits += Math.Floor((decimal) perf.Audience / 5);
 
                 // print line for this order
-                result += $"{play.Name}: {format(thisAmount / 100)} ({perf.Audience} seats)\n";
+                result += $"{PlayFor(perf, plays).Name}: {format(thisAmount / 100)} ({perf.Audience} seats)\n";
                 totalAmount += thisAmount;
             }
 
@@ -56,6 +55,11 @@ namespace RefatoringMartinFowler.models
             }
 
             return result;
+        }
+
+        public Play PlayFor(Performance performance, Dictionary<string, Play> plays)
+        {
+            return plays[performance.PlayID];
         }
     }
 }
