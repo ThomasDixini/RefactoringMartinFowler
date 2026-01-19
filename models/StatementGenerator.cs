@@ -56,9 +56,9 @@ namespace RefatoringMartinFowler.models
 
         public Performance EnrichPerformance(Performance aPerformance)
         {
-            var calculator = new PerformanceCalculator(aPerformance);
+            var calculator = new PerformanceCalculator(aPerformance, PlayFor(aPerformance));
             var result = aPerformance;
-            result.Play = PlayFor(aPerformance);
+            result.Play = calculator.Play;
             result.Amount = AmountFor(result);
             result.VolumeCredits = VolumeCreditsFor(result);
             return result;
