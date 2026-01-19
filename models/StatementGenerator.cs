@@ -17,18 +17,17 @@ namespace RefatoringMartinFowler.models
             int totalAmount = 0;
             decimal volumeCredits = 0m;
             string result = $"Statement for {invoice.Customer}\n";
-            Func<decimal, string> format = amount => amount.ToString("C", CultureInfo.GetCultureInfo("en-US"));
 
             foreach(var perf in invoice.Performances)
             {
                 volumeCredits += VolumeCreditsFor(perf);
 
                 // print line for this order
-                result += $"{PlayFor(perf).Name}: {format(AmountFor(perf) / 100)} ({perf.Audience} seats)\n";
+                result += $"{PlayFor(perf).Name}: {Usd(AmountFor(perf))} ({perf.Audience} seats)\n";
                 totalAmount += AmountFor(perf);
             }
 
-            result += $"Amount owed is {format(totalAmount / 100)}\n";
+            result += $"Amount owed is {Usd(totalAmount)}\n";
             result += $"You earned {volumeCredits} credits\n";
             return result;
         }
@@ -71,6 +70,11 @@ namespace RefatoringMartinFowler.models
             result += Math.Max(aPerformance.Audience - 30, 0);
             if("comedy" == PlayFor(aPerformance).Type) result += Math.Floor((decimal) aPerformance.Audience / 5);
             return result;
+        }
+
+        public string Usd(decimal amount)
+        {
+            return (amount / 100).ToString("C", CultureInfo.GetCultureInfo("en-US"));
         }
     }
 }
