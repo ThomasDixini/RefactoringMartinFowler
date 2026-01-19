@@ -9,5 +9,8 @@ namespace RefatoringMartinFowler.models
     {
         public required string PlayID { get; set; }
         public int Audience { get; set; }
+        public Play Play { get; set; }
+        public int Amount { get ; set; }
+        public decimal VolumeCredits { get; set; }
     }
 }

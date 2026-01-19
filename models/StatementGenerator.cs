@@ -7,6 +7,7 @@ namespace RefatoringMartinFowler.models
     {
         public Dictionary<string, Play> Plays { get; set; } = new Dictionary<string, Play>();
         public Invoice Invoice { get; set; }
+        StatementData StatementData = new StatementData();
         public StatementGenerator()
         {
             var playsJson = File.ReadAllText(@"C:\Projetos\RefatoringMartinFowler\jsons\Plays.json");
@@ -20,26 +21,39 @@ namespace RefatoringMartinFowler.models
         }
         public string Statement(Invoice invoice, Dictionary<string, Play> plays)
         {
-            return RenderPlainText(invoice, plays);
+            StatementData.Customer = invoice.Customer;
+            StatementData.Performances = invoice.Performances.Select(p => EnrichPerformance(p)).ToList();
+            StatementData.TotalAmount = TotalAmount(StatementData);
+            StatementData.TotalVolumeCredits = TotalVolumeCredits(StatementData);
+            return RenderPlainText(StatementData, invoice, plays);
         }
 
-        public string RenderPlainText(Invoice invoice, Dictionary<string, Play> plays)
+        public Performance EnrichPerformance(Performance aPerformance)
         {
-            string result = $"Statement for {invoice.Customer}\n";
-            foreach(var perf in invoice.Performances)
+            var result = aPerformance;
+            result.Play = PlayFor(aPerformance);
+            result.Amount = AmountFor(result);
+            result.VolumeCredits = VolumeCreditsFor(result);
+            return result;
+        }
+
+        public string RenderPlainText(StatementData data, Invoice invoice, Dictionary<string, Play> plays)
+        {
+            string result = $"Statement for {data.Customer}\n";
+            foreach(var perf in data.Performances)
             {
-                result += $"{PlayFor(perf).Name}: {Usd(AmountFor(perf))} ({perf.Audience} seats)\n";
+                result += $"{perf.Play.Name}: {Usd(perf.Amount)} ({perf.Audience} seats)\n";
             }
 
-            result += $"Amount owed is {Usd(TotalAmount())}\n";
-            result += $"You earned {TotalVolumeCredits()} credits\n";
+            result += $"Amount owed is {Usd(data.TotalAmount)}\n";
+            result += $"You earned {data.TotalVolumeCredits} credits\n";
             return result;
         }
 
         public int AmountFor(Performance aPerformance)
         {
             int result;
-            switch(PlayFor(aPerformance).Type)
+            switch(aPerformance.Play.Type)
             {
                 case "tragedy":
                     result = 40000;
@@ -57,7 +71,7 @@ namespace RefatoringMartinFowler.models
                     result += 300 * aPerformance.Audience;
                     break;
                 default:
-                    throw new Exception($"unknown type: {PlayFor(aPerformance).Type}");
+                    throw new Exception($"unknown type: {aPerformance.Play.Type}");
             }
 
             return result;
@@ -72,7 +86,7 @@ namespace RefatoringMartinFowler.models
         {
             decimal result = 0m;
             result += Math.Max(aPerformance.Audience - 30, 0);
-            if("comedy" == PlayFor(aPerformance).Type) result += Math.Floor((decimal) aPerformance.Audience / 5);
+            if("comedy" == aPerformance.Play.Type) result += Math.Floor((decimal) aPerformance.Audience / 5);
             return result;
         }
 
@@ -81,25 +95,14 @@ namespace RefatoringMartinFowler.models
             return (amount / 100).ToString("C", CultureInfo.GetCultureInfo("en-US"));
         }
 
-        public decimal TotalVolumeCredits()
+        public decimal TotalVolumeCredits(StatementData data)
         {
-            decimal result = 0m;
-            foreach(var perf in Invoice.Performances)
-            {
-                result += VolumeCreditsFor(perf);
-            }
-            return result;
+            return data.Performances.Sum(p => p.VolumeCredits);
         }
 
-        public int TotalAmount()
+        public int TotalAmount(StatementData data)
         {
-            int result = 0;
-            foreach(var perf in Invoice.Performances)
-            {
-                result += AmountFor(perf);
-            }
-
-            return result;
+            return data.Performances.Sum(p => p.Amount);
         }
     }
 }
