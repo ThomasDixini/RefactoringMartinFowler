@@ -21,11 +21,16 @@ namespace RefatoringMartinFowler.models
         }
         public string Statement(Invoice invoice, Dictionary<string, Play> plays)
         {
+            return RenderPlainText(CreateStatementData(invoice, plays));
+        }
+
+        public StatementData CreateStatementData(Invoice invoice, Dictionary<string, Play> plays)
+        {
             StatementData.Customer = invoice.Customer;
             StatementData.Performances = invoice.Performances.Select(p => EnrichPerformance(p)).ToList();
             StatementData.TotalAmount = TotalAmount(StatementData);
             StatementData.TotalVolumeCredits = TotalVolumeCredits(StatementData);
-            return RenderPlainText(StatementData, invoice, plays);
+            return StatementData;
         }
 
         public Performance EnrichPerformance(Performance aPerformance)
@@ -37,7 +42,7 @@ namespace RefatoringMartinFowler.models
             return result;
         }
 
-        public string RenderPlainText(StatementData data, Invoice invoice, Dictionary<string, Play> plays)
+        public string RenderPlainText(StatementData data)
         {
             string result = $"Statement for {data.Customer}\n";
             foreach(var perf in data.Performances)
