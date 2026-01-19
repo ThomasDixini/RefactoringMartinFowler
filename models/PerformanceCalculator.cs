@@ -9,7 +9,7 @@ namespace RefatoringMartinFowler.models
     {
         public Performance Performance { get; set; }
         public Play Play { get; set;}
-        public decimal Amount
+        public int Amount
         {
             get {
                 int result;
@@ -34,6 +34,15 @@ namespace RefatoringMartinFowler.models
                         throw new Exception($"unknown type: {Performance.Play.Type}");
                 }
 
+                return result;
+            }
+        }
+        public decimal VolumeCredits
+        {
+            get {
+                decimal result = 0m;
+                result += Math.Max(Performance.Audience - 30, 0);
+                if("comedy" == Performance.Play.Type) result += Math.Floor((decimal) Performance.Audience / 5);
                 return result;
             }
         }

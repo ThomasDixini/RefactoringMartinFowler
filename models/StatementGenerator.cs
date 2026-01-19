@@ -59,8 +59,8 @@ namespace RefatoringMartinFowler.models
             var calculator = new PerformanceCalculator(aPerformance, PlayFor(aPerformance));
             var result = aPerformance;
             result.Play = calculator.Play;
-            result.Amount = AmountFor(result);
-            result.VolumeCredits = VolumeCreditsFor(result);
+            result.Amount = calculator.Amount;
+            result.VolumeCredits = calculator.VolumeCredits;
             return result;
         }
 
@@ -79,29 +79,7 @@ namespace RefatoringMartinFowler.models
 
         public int AmountFor(Performance aPerformance)
         {
-            int result;
-            switch(aPerformance.Play.Type)
-            {
-                case "tragedy":
-                    result = 40000;
-                    if(aPerformance.Audience > 30)
-                    {
-                        result += 1000 * (aPerformance.Audience - 30);
-                    }
-                    break;
-                case "comedy":
-                    result = 30000;
-                    if(aPerformance.Audience > 20)
-                    {
-                        result += 10000 + 500 * (aPerformance.Audience - 20);
-                    }
-                    result += 300 * aPerformance.Audience;
-                    break;
-                default:
-                    throw new Exception($"unknown type: {aPerformance.Play.Type}");
-            }
-
-            return result;
+            return new PerformanceCalculator(aPerformance, PlayFor(aPerformance)).Amount;
         }
 
         public Play PlayFor(Performance performance)
@@ -111,10 +89,7 @@ namespace RefatoringMartinFowler.models
 
         public decimal VolumeCreditsFor(Performance aPerformance)
         {
-            decimal result = 0m;
-            result += Math.Max(aPerformance.Audience - 30, 0);
-            if("comedy" == aPerformance.Play.Type) result += Math.Floor((decimal) aPerformance.Audience / 5);
-            return result;
+            return new PerformanceCalculator(aPerformance, PlayFor(aPerformance)).VolumeCredits;
         }
 
         public string Usd(decimal amount)
