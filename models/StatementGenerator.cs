@@ -30,10 +30,8 @@ namespace RefatoringMartinFowler.models
                 totalAmount += AmountFor(perf);
             }
 
-            decimal volumeCredits = TotalAmountFor();
-
             result += $"Amount owed is {Usd(totalAmount)}\n";
-            result += $"You earned {volumeCredits} credits\n";
+            result += $"You earned {TotalAmountFor()} credits\n";
             return result;
         }
 
