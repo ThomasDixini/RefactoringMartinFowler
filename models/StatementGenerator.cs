@@ -67,10 +67,10 @@ namespace RefatoringMartinFowler.models
 
         public decimal VolumeCreditsFor(Performance aPerformance)
         {
-            decimal volumeCredits = 0m;
-            volumeCredits += Math.Max(aPerformance.Audience - 30, 0);
-            if("comedy" == PlayFor(aPerformance).Type) volumeCredits += Math.Floor((decimal) aPerformance.Audience / 5);
-            return volumeCredits;
+            decimal result = 0m;
+            result += Math.Max(aPerformance.Audience - 30, 0);
+            if("comedy" == PlayFor(aPerformance).Type) result += Math.Floor((decimal) aPerformance.Audience / 5);
+            return result;
         }
     }
 }
