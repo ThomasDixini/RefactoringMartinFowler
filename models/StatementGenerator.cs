@@ -1,9 +1,17 @@
 using System.Globalization;
+using System.Text.Json;
 
 namespace RefatoringMartinFowler.models
 {
     public class StatementGenerator
     {
+        public Dictionary<string, Play> Plays { get; set; } = new Dictionary<string, Play>();
+        public StatementGenerator()
+        {
+            var playsJson = File.ReadAllText(@"C:\Projetos\RefatoringMartinFowler\jsons\Plays.json");
+            var plays = JsonSerializer.Deserialize<Dictionary<string, Play>>(playsJson) ?? throw new Exception("Plays deserialization resulted in null");
+            Plays = plays;
+        }
         public string Statement(Invoice invoice, Dictionary<string, Play> plays)
         {
             int totalAmount = 0;
@@ -13,15 +21,15 @@ namespace RefatoringMartinFowler.models
 
             foreach(var perf in invoice.Performances)
             {
-                int thisAmount = AmountFor(perf, PlayFor(perf, plays));
+                int thisAmount = AmountFor(perf, PlayFor(perf));
 
                 // add volume credits
                 volumeCredits += Math.Max(perf.Audience - 30, 0);
                 // add extra credit for every ten comedy attendees
-                if("comedy" == PlayFor(perf, plays).Type) volumeCredits += Math.Floor((decimal) perf.Audience / 5);
+                if("comedy" == PlayFor(perf).Type) volumeCredits += Math.Floor((decimal) perf.Audience / 5);
 
                 // print line for this order
-                result += $"{PlayFor(perf, plays).Name}: {format(thisAmount / 100)} ({perf.Audience} seats)\n";
+                result += $"{PlayFor(perf).Name}: {format(thisAmount / 100)} ({perf.Audience} seats)\n";
                 totalAmount += thisAmount;
             }
 
@@ -57,9 +65,9 @@ namespace RefatoringMartinFowler.models
             return result;
         }
 
-        public Play PlayFor(Performance performance, Dictionary<string, Play> plays)
+        public Play PlayFor(Performance performance)
         {
-            return plays[performance.PlayID];
+            return Plays[performance.PlayID];
         }
     }
 }
