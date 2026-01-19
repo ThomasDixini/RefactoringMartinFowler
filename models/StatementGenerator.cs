@@ -24,6 +24,27 @@ namespace RefatoringMartinFowler.models
             return RenderPlainText(CreateStatementData(invoice, plays));
         }
 
+        public string HTMLStatement(Invoice invoice, Dictionary<string, Play> plays)
+        {
+            return RenderHTML(CreateStatementData(invoice, plays));
+        }
+
+        public string RenderHTML(StatementData data)
+        {
+            var result = @$"<h1>Statement for {data.Customer}</h1>";
+            result += "<table>\n";
+            result += "<tr><th>Play</th><th>Seats</th><th>Cost</th></tr>";
+            foreach(var perf in data.Performances)
+            {
+                result += $"<tr><td>{perf.Play.Name}</td><td>{perf.Audience}</td><td>{Usd(perf.Amount)}</td></tr>\n";
+                result += $"<td>{Usd(perf.Amount)}</td>\n";
+            }
+            result += "</table>\n";
+            result += $"<p>Amount owed is <em>{Usd(data.TotalAmount)}</em></p>\n";
+            result += $"<p>You earned <em>{data.TotalVolumeCredits}</em> credits</p>\n";
+            return result;
+        }
+
         public StatementData CreateStatementData(Invoice invoice, Dictionary<string, Play> plays)
         {
             StatementData.Customer = invoice.Customer;
