@@ -20,16 +20,13 @@ namespace RefatoringMartinFowler.models
         }
         public string Statement(Invoice invoice, Dictionary<string, Play> plays)
         {
-            int totalAmount = AppleSauce();
             string result = $"Statement for {invoice.Customer}\n";
-
             foreach(var perf in invoice.Performances)
             {
-                // print line for this order
                 result += $"{PlayFor(perf).Name}: {Usd(AmountFor(perf))} ({perf.Audience} seats)\n";
             }
 
-            result += $"Amount owed is {Usd(totalAmount)}\n";
+            result += $"Amount owed is {Usd(TotalAmount())}\n";
             result += $"You earned {TotalAmountFor()} credits\n";
             return result;
         }
@@ -89,7 +86,7 @@ namespace RefatoringMartinFowler.models
             return volumeCredits;
         }
 
-        public int AppleSauce()
+        public int TotalAmount()
         {
             int totalAmount = 0;
             foreach(var perf in Invoice.Performances)
