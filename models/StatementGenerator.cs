@@ -21,16 +21,14 @@ namespace RefatoringMartinFowler.models
 
             foreach(var perf in invoice.Performances)
             {
-                int thisAmount = AmountFor(perf);
-
                 // add volume credits
                 volumeCredits += Math.Max(perf.Audience - 30, 0);
                 // add extra credit for every ten comedy attendees
                 if("comedy" == PlayFor(perf).Type) volumeCredits += Math.Floor((decimal) perf.Audience / 5);
 
                 // print line for this order
-                result += $"{PlayFor(perf).Name}: {format(thisAmount / 100)} ({perf.Audience} seats)\n";
-                totalAmount += thisAmount;
+                result += $"{PlayFor(perf).Name}: {format(AmountFor(perf) / 100)} ({perf.Audience} seats)\n";
+                totalAmount += AmountFor(perf);
             }
 
             result += $"Amount owed is {format(totalAmount / 100)}\n";
